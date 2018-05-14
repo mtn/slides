@@ -5,3 +5,4 @@ authors = ["Michael Noronha <michaeltnoronha@gmail.com>"]
 
 [dependencies]
 argparse = "0.2.1"
+sha1 = { version = "0.6.0", features = ["std"] }
