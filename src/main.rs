@@ -2,6 +2,7 @@
 
 extern crate argparse;
 extern crate flate2;
+extern crate glob;
 extern crate sha1;
 
 mod object;
