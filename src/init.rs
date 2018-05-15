@@ -1,32 +1,29 @@
-use std::error::Error;
+use std::process::exit;
+use std::path::Path;
 use std::env;
 use std::fs;
 
-use util::die;
-
-
-const BASE_DIR: &'static str = ".mgit";
 
 // Initialize an empty repository
 pub fn init() {
-    let create_res = fs::create_dir(BASE_DIR);
-    if let Err(e) = create_res {
-        die(e.description());
+    // If the git subdirectory already exists, abort initialization
+    if Path::new(::BASE_DIR).exists() {
+        println!("there is already a repository here, aborting");
+        exit(0);
     }
+
+    // Create the main vc subdirectory
+    fs::create_dir(::BASE_DIR).expect("git subdirectory creation failed");
 
     for dir_name in ["objects", "refs", "refs/head"].iter() {
-        let create_res = fs::create_dir(format!("{}/{}",
-                                                BASE_DIR,
-                                                dir_name));
-        if let Err(e) = create_res {
-            die(e.description());
-        }
+        fs::create_dir(format!("{}/{}", ::BASE_DIR, dir_name))
+            .expect("directory creation failed");
     }
 
-    fs::write(format!("{}/HEAD", BASE_DIR), b"ref: refs/heads/master")
-        .expect("Unable to write file");
+    fs::write(format!("{}/HEAD", ::BASE_DIR), b"ref: refs/heads/master")
+        .expect("unable to write file HEAD");
 
-    println!("Initialized empty Git repository in {}",
+    println!("initialized empty git repository in {}",
              env::current_dir().unwrap().display());
 }
 

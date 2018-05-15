@@ -1,3 +1,6 @@
+use std::path::Path;
+use std::fs;
+
 use sha1;
 
 // Compute the digest of an object
@@ -9,6 +12,15 @@ pub fn digest(data: &str, obj_type: &str, write: bool) {
     let hashed_digest = sha1::Sha1::from(to_hash.as_bytes()).hexdigest();
 
     if write {
+        let path = format!("{}/objects/{}/{}",
+                           ::BASE_DIR,
+                           hashed_digest.chars().take(2).collect::<String>(),
+                           hashed_digest.chars().skip(2).collect::<String>());
+        let path = Path::new(&path);
 
+        if !path.exists() {
+            fs::create_dir(path).expect("directory creation failed;");
+
+        }
     }
 }
